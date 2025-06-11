@@ -5,13 +5,18 @@ from PyQt6.QtCore import Qt
 import mysql.connector
 from PIL import Image
 import io
+import os
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
 
 class LoginApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Purvaj.com Login")
         self.setWindowIcon(QIcon("window_logo.png"))
-        self.setFixedSize(730, 450)  # Default size
+        # self.setFixedSize(730, 450)  # Default size
+        self.setFixedSize(977,596)  # Default size
+
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.WindowCloseButtonHint | Qt.WindowType.WindowMaximizeButtonHint)
 
         # Reference sizes for scaling
@@ -162,24 +167,28 @@ class LoginApp(QWidget):
     def validate_login(self):
         username = self.username_entry.text()
         password = self.password_entry.text()
-
+        
+        print(os.getenv("user"))
         try:
             connection = mysql.connector.connect(
                 host="localhost",
-                user="root",
-                password="password",
-                database="purvaj_db"
+                user=os.getenv("user"),
+                password=os.getenv("password"),
+                database=os.getenv("database")
             )
             cursor = connection.cursor()
             query = "SELECT * FROM users WHERE username = %s AND password = %s"
             cursor.execute(query, (username, password))
             result = cursor.fetchone()
-
+            Uploader_Name = None
+            if result:
+                # Assuming the columns are (id, username, password, name, ...)
+                Uploader_Name = result[2]  # Adjust index if 'name' is at a different position
             if result:
                 # On successful login, close the login window and open the dashboard
                 from dashboard import DashboardApp  # Import here to avoid circular import
                 self.close()
-                self.dashboard = DashboardApp()
+                self.dashboard = DashboardApp(Uploader_Name)
                 self.dashboard.show()
             else:
                 QMessageBox.critical(self, "Error", "Invalid Username or Password")
