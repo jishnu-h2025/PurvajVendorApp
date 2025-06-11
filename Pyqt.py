@@ -61,8 +61,23 @@ class LoginApp(QWidget):
 
         # Login button
         self.login_button = QPushButton("Login")
-        self.login_button.setFixedWidth(100)
-        self.login_button.setStyleSheet("background-color: #4CAF50; color: white; font: bold 12px Helvetica; border: none; padding: 5px;")
+        # self.login_button.setFixedWidth(100)
+        self.login_button.setFixedWidth(240)
+        # Set login button width and height to match username/password fields
+        input_width = self.username_entry.width()
+        input_height = self.username_entry.height()
+        self.login_button.setFixedWidth(input_width)
+        self.login_button.setFixedHeight(input_height)
+        self.login_button.setStyleSheet("""
+            background-color: #4A704A;
+            border-color: #4A704A;
+            color: white; 
+            font: bold 16px Helvetica; 
+            border: none; 
+            padding: 1.2rem 0.5rem;
+        """)
+
+        self.login_button.setFixedHeight(40)
         self.login_button.clicked.connect(self.validate_login)
         self.login_layout.addWidget(self.login_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
